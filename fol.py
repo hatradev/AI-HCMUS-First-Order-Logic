@@ -49,12 +49,10 @@ rules = []
 rules.append(Rule("Father", ["F", "C"], [kb("Male", ["F"]), kb("Parent", ["F", "C"])], [1]))
 rules.append(Rule("Mother", ["M", "C"], [kb("Female", ["M"]), kb("Parent", ["M", "C"])], [1]))
 rules.append(Rule("GrandFather", ["GF", "GC"], [kb("Father", ["GF", "X"]), kb("Parent", ["X", "GC"])], [1]))
+rules.append(Rule("GrandMother", ["GM", "GC"], [kb("Mother", ["GM", "X"]), kb("Parent", ["X", "GC"])], [1]))
 # SingleQuestion("GrandFather", ["X", "Tra"]) ==> Tac
 # ? - Father(X, "Tra") => "L"
 # SingleQuestion("Father", ["X", "Tra"], 0)
-
-# rules.append(Rule("GrandFather", ["GF", "GC"], [Fact("Male", ["GF"]), Fact("Parent", ["GF", "X"]), Fact("Parent", ["X", "GC"])]))
-# rules.append(Rule("GrandMother", ["GM", "GC"], [Fact("Female", ["GM"]), Fact("Parent", ["GM", "X"]), Fact("Parent", ["X", "GC"])]))
 
 
 class SingleQuestion:
@@ -99,7 +97,7 @@ def solveFact(kbsIndex, facts, q: SingleQuestion):
     return res 
   
 def printSingleQuestion(q: SingleQuestion):
-  print("================")
+  print("== Câu hỏi mới==")
   print(q.name)
   print("Objs: ", q.objs)
   print(q.pos)
@@ -110,56 +108,81 @@ def common_member(a, b):
     result = [i for i in a if i in b]
     return result
 
-def solveSingleQuestion(rules, facts, q: SingleQuestion):
+def solveSingleQuestion(rules, facts, q: SingleQuestion, questions: [SingleQuestion]):
   kbsIndex = findinRules(rules, q)
   if len(kbsIndex) == 0:
     kbsIndex = findinFacts(facts, q)
     return solveFact(kbsIndex, facts, q)
-  # printSingleQuestion(q)
   # Kiểm tra câu hỏi là YES-NO hay WHO?
   if(q.pos == -1):
     result = True
   else: result = []
-  for i in kbsIndex:   
-    currentOpr = 0
+  for kbI in kbsIndex:
     # Duyệt qua từng kb nhỏ trong kb lớn
-    for kb in rules[i].kbs:
+    for k in range(len(rules[kbI].kbs)):
+      kb = rules[kbI].kbs[k]
+      print(rules[kbI].name, rules[kbI].objs)
       # Tạo một mảng obj mới để lưu các giá trị cụ thể cho câu hỏi mới
       newObjs = []
+      varIdx = q.pos
       # Duyệt qua từng obj trong kb nhỏ
       idx = -1
       for i in range(len(kb.objs)):
+        flag = True
         # Tìm vị trí tương ứng của obj đó trong kb lớn 
         try: 
-          idx = rules[i].objs.index(kb.objs[i])
+          print(rules[kbI].objs, kb.objs[i])
+          idx = rules[kbI].objs.index(kb.objs[i])
         except ValueError:
-          idx = -1
-        # Nếu tìm được thì lưu vào newObjs
-        if(idx != -1):
+          idx = -1      
+        print("Tìm được ở ", idx)
+        if(idx != -1): # Nếu tìm được thì lưu vào newObjs
           newObjs.append(q.objs[idx])
-        # Nếu k tìm được thì đó là biến trung gian
-        else:
-          newObjs.append("X")
-      # print(kb.name, newObjs)
-      newQ = SingleQuestion(kb.name, newObjs, q.pos)
-      # printSingleQuestion(newQ)
-      res = solveSingleQuestion(rules, facts, newQ)
-      # print(res)
-      if(i == 0):
-        result = res
-      elif(rules[i].opr[currentOpr] == 1): # AND
-        currentOpr += 1 
-        if(q.pos == -1): # Câu hỏi YES-NO
-          result = result and res
-        else: # Câu hỏi WHO
+          if(idx == q.pos): # Vị trí tìm được là vị trí của biến 
+            varIdx = i # Cập nhật vị trí biến mới trong newQ        
+        else: # Nếu k tìm được thì đó là biến trung gian
+          if(q.pos == -1):
+            newObjs.append(kb.objs[i])
+            if(len(questions) == 0): varIdx = i
+            # break
+          elif(i == q.pos): # Vị trí biến trung gian trùng vị trí biến => Giải 
+            newObjs.append(kb.objs[i])
+          else: # Vị trí biến trung gian k trùng vị trí biến => K giải
+            questions.append(SingleQuestion(kb.name, kb.objs, q.pos))
+            flag = False
+        print(i, flag, newObjs)
+        print("=====================")
+      if(flag):
+        newQ = SingleQuestion(kb.name, newObjs, varIdx)
+        printSingleQuestion(newQ)
+        res = solveSingleQuestion(rules, facts, newQ, questions)
+        # print(res)
+        if(k == 0):
+          result = res
+        elif(rules[kbI].opr[k - 1] == 1): # AND
+          if(q.pos == -1): # Câu hỏi YES-NO
+            result = result and res
+          else: # Câu hỏi WHO
+            # printSingleQuestion(newQ)
+            for quesIdx in range(len(questions)):
+              ques = questions[quesIdx]
+              # printSingleQuestion(ques)
+              print(newQ.objs[newQ.pos], ques.objs[1 - ques.pos])
+              if(newQ.objs[newQ.pos] == ques.objs[1 - ques.pos]):
+                questions.pop(quesIdx)
+                for person in res:
+                  ques.objs[1 - ques.pos] = person
+                  printSingleQuestion(ques)
+                  # ques.pos = newQ.pos
+                  subRes = solveSingleQuestion(rules, facts, ques, questions)
+                  if(len(subRes) > 0):
+                    return subRes
             result = common_member(result, res)
-      elif(rules[i].opr[currentOpr] == 0): # OR
-        currentOpr += 1
-        if(q.pos == -1): # Câu hỏi YES-NO
-          result = result or res
-        else: # Câu hỏi WHO
-            result.extend(res)
-      # printSingleQuestion(newQ)
+        elif(rules[kbI].opr[k - 1] == 0): # OR
+          if(q.pos == -1): # Câu hỏi YES-NO
+            result = result or res
+          else: # Câu hỏi WHO
+              result.extend(res)
   return result
 
 # Câu hỏi liên quan đến Facts
@@ -177,9 +200,11 @@ fq6 = SingleQuestion("Parent", ["X", "Tra"], 0) # ['L', 'Huong']
 rq = SingleQuestion("Father", ["L", "Tra"], -1) # True
 rq1 = SingleQuestion("Mother", ["Huong", "Tra"], -1) # True
 rq2 = SingleQuestion("Married", ["L", "Huong"], -1) # True
+rq3 = SingleQuestion("GrandFather", ["Tac", "Tra"], -1) # True
 # WHO?
-rq5 = SingleQuestion("Mother", ["X", "Tra"], 0) # Huong
-rq6 = SingleQuestion("Father", ["X", "Tra"], 0) # L
+rq5 = SingleQuestion("GrandMother", ["Xanh", "Tra"], -1) # Huong
+# rq6 = SingleQuestion("GrandMother", ["X", "Tra"], 1) # L
+# rq6 = SingleQuestion("GrandFather", ["L", "Tra"], -1) # L
 
-print(solveSingleQuestion(rules, facts, fq6))
-print(solveSingleQuestion(rules, facts, rq6))
+print(solveSingleQuestion(rules, facts, rq5, []))
+# print(solveSingleQuestion(rules, facts, rq6, []))
