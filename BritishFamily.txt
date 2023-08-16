@@ -55,7 +55,7 @@ parent('Prince Andrew', 'Princess Eugenie').
 parent('Sophie Rhys-jones', 'James, Viscount Severn').
 parent('Sophie Rhys-jones', 'Lady Louise Mountbatten-Windsor').
 parent('Prince Edward', 'James, Viscount Severn').
-parent('Prince Edward', 'Lady Louise Mountbatten-Windsor').
+parent('Prince Edward', 'Lady Louise Mountbatten-Windsor')
 parent('Prince William', 'Prince George').
 parent('Prince William', 'Princess Charlotte').
 parent('Kate Middleton', 'Prince George').
