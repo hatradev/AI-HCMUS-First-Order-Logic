@@ -77,6 +77,9 @@ def findinRules(rules, q: SingleQuestion):
 
 def findinFacts(facts, q: SingleQuestion):
   rt = []
+  if q.name == "\\==":
+    rt.append(-1)
+    return rt
   for i in range(len(facts)):
     if q.name == facts[i].name:
       rt.append(i)
@@ -92,7 +95,11 @@ def solveFact(kbsIndex, facts, q: SingleQuestion):
     res = []
     k = len(q.objs) - 1
     for i in kbsIndex:
-      if facts[i].objs[k - q.pos] == q.objs[k - q.pos] or not k:
+      if i == -1:
+        for f in facts:
+          if len(f.objs) == 1 and f.objs[0] != q.objs[k - q.pos] and f.objs[0] not in res:
+            res.append(f.objs[0])
+      elif facts[i].objs[k - q.pos] == q.objs[k - q.pos] or not k:
         res.append(facts[i].objs[q.pos])
     return res 
   
