@@ -93,26 +93,25 @@ divorced('Prince Andrew', 'Sarah Ferguson').
 
 /************************** Rules **************************/
 husband(Person, Wife) :- male(Person), female(Wife), married(Person, Wife).
-wife(Person, Husband) :- female(Person), male(Husband), married(Person, Husband).
+wife(Person, Husband) :- female(Person), male(Husband), married(Husband, Person).
 father(Parent, Child) :- parent(Parent, Child), male(Parent).
 mother(Parent, Child) :- parent(Parent, Child), female(Parent).
 child(Child, Parent) :- parent(Parent, Child).
 son(Child, Parent) :- male(Child), parent(Parent, Child).
 daughter(Child, Parent) :- female(Child), parent(Parent, Child).
-grandparent(GP, GC) :- parent(GP, P), parent(P, GC).
+grandparent(GP, GC) :- parent(GP, Father), parent(Father, GC).
 grandfather(GF, GC) :- male(GF), grandparent(GF, GC).
 grandmother(GM, GC) :- female(GM), grandparent(GM, GC)
 grandchild(GC, GP) :- grandparent(GP, GC).
 grandson(GS, GP) :- male(GS), grandchild(GS, GP).
 granddaughter(GD, GP) :- female(GD), grandchild(GD, GP).
-sibling(Person1, Person2) :- parent(P, Person1), parent(P, Person2), Person1 \== Person2.
-bi_sibling(Person1, Person2) :- sibling(Person1, Person2); sibling(Person2, Person1).
-brother(Person, Sibling) :- male(Person), bi_sibling(Person, Sibling).
-sister(Person, Sibling) :- female(Person), bi_sibling(Person, Sibling).
-brother_in_law(Person1, Person2) :- male(Person1), (husband(Person1, P), sister(P, Person2)).
-sister_in_law(Person1, Person2) :- female(Person1), (wife(Person1, P), brother(P, Person2)).
-aunt(Person, NieceNephew) :- (sister(Person, P); sister_in_law(Person, P)), parent(P, NieceNephew).
-uncle(Person, NieceNephew) :- (brother(Person, P); brother_in_law(Person, P)), parent(P, NieceNephew).
+sibling(Person1, Person2) :- parent(PR, Person1), parent(PR, Person2), Person1 \== Person2.
+brother(Person, Sibling) :- male(Person), sibling(Person, Sibling).
+sister(Person, Sibling) :- female(Person), sibling(Person, Sibling).
+brother_in_law(Person1, Person2) :- male(Person1), husband(Person1, Sister), sister(Sister, Person2).
+sister_in_law(Person1, Person2) :- female(Person1), wife(Person1, Brother), brother(Brother, Person2).
+aunt(Person, NieceNephew) :- (sister(Person, Parent); sister_in_law(Person, Parent)), parent(Parent, NieceNephew).
+uncle(Person, NieceNephew) :- (brother(Person, Parent); brother_in_law(Person, Parent)), parent(Parent, NieceNephew).
 niece(Person, AuntUncle) :- female(Person), (aunt(AuntUncle, Person); uncle(AuntUncle, Person)).
 nephew(Person, AuntUncle) :- male(Person), (aunt(AuntUncle, Person); uncle(AuntUncle, Person)).
 /* end */

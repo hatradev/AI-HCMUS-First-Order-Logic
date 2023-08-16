@@ -32,16 +32,17 @@ class Rule(kb):
 
 
 class SingleQuestion:
-    def __init__(self, name, objects, pos):
+    def __init__(self, name, objects, pos, canSolve = True):
         self.name = name
         self.pos = pos  # -1 (True, False), 0, 1
         self.objs = objects
+        self.canSolve = canSolve
 
     def xuat(self):
         print(self.name, self.objs, self.pos)
 
 
-def splitFacts(line):
+def splitFacts(line, isQ = False):
     first = line.split("(")
     if "" in first:
         first.remove("")
@@ -73,10 +74,10 @@ def splitFacts(line):
         first.pop(1)
         first.pop(-1)
 
-    if first[-1].endswith("'") and first[-1].find("', '") != -1:
+    if not isQ and first[-1].endswith("'") and first[-1].find("', '") != -1:
         first[-1] = first[-1][1:-2] if first[-1].endswith(")'") else first[-1][1:-1]
         first[-1] = first[-1].replace("', '", "><")
-    elif not (first[-1].startswith("'") and first[-1].endswith("'")):
+    elif (not (first[-1].startswith("'") and first[-1].endswith("'"))) or isQ:
         first[-1] = first[-1].replace(", ", "><")
 
     first.extend(first[-1].split("><"))
@@ -151,7 +152,7 @@ def readFactsAndRules(filename):
                 if first[i].endswith("'"):
                     first[i] = first[i][:-1]
             facts.append(Fact(first[0], first[1:]))
-            facts[-1].xuat()
+            # facts[-1].xuat()
         else:
             # rules
             first = line.split(":- ")
@@ -185,11 +186,12 @@ def readQuestions(filename):
         if line.startswith("/*") or line == "" or line == "\n":
             continue
         if line.startswith("?- "):
-            first = splitFacts(line[3:-1])
+            first = splitFacts(line[3:-1], True)
             for i in range(len(first)):
                 if first[i].find("'") != -1:
-                    q = (len(first) - 1) - i
                     first[i] = first[i][1:-1]
+                else:
+                    q = i-1 if i != 0 else -1
             questions.append(SingleQuestion(first[0], first[1:], q))
             # questions[-1].xuat()
     return questions
