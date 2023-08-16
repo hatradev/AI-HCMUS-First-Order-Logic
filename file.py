@@ -31,6 +31,13 @@ class Rule(kb):
         print("\n")
 
 
+class SingleQuestion:
+    def __init__(self, name, objects, pos):
+        self.name = name
+        self.pos = pos  # -1 (True, False), 0, 1
+        self.objs = objects
+
+
 def splitFacts(line):
     first = line.split("(")
     if "" in first:
@@ -62,8 +69,8 @@ def splitFacts(line):
         first.extend(first[-1].split(")"))
         first.pop(1)
         first.pop(-1)
-
-    if first[-1].endswith("'"):
+    print(first)
+    if first[-1].endswith("'") and first[-1].find("', '") != -1:
         first[-1] = first[-1][1:-2]
         first[-1] = first[-1].replace("', '", "><")
     else:
@@ -162,7 +169,28 @@ def readFactsAndRules(filename):
     return facts, rules
 
 
-readFactsAndRules("BritishFamily.txt")
+def readQuestions(filename):
+    f = open(filename, "r")
+    datalist = f.readlines()
+    questions = []
+    q = -1
+    for line in datalist:
+        if line.startswith("/*") or line == "" or line == "\n":
+            continue
+        if line.startswith("?- "):
+            print(line)
+            first = splitFacts(line[3:-1])
+            for i in range(len(first)):
+                if first[i].find("'") != -1:
+                    q = (len(first) - 1) - i
+                    first[i] = first[i][1:-1]
+            questions.append(SingleQuestion(first[0], first[1:], q))
+            questions[-1].xuat()
+            print("Bien tai: ", q)
+
+
+# readFactsAndRules("BritishFamily.txt")
+# readQuestions("question.txt")
 # print(splitFacts("(male(Person"))
 # print(splitFacts("parent(Parent, Child"))
 # print(splitFacts("divorced('Princess Diana', 'Prince Charles')."))
