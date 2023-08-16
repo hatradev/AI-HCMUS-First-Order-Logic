@@ -31,6 +31,16 @@ class Rule(kb):
         print("\n")
 
 
+class SingleQuestion:
+    def __init__(self, name, objects, pos):
+        self.name = name
+        self.pos = pos  # -1 (True, False), 0, 1
+        self.objs = objects
+
+    def xuat(self):
+        print(self.name, self.objs, self.pos)
+
+
 def splitFacts(line):
     first = line.split("(")
     if "" in first:
@@ -63,10 +73,10 @@ def splitFacts(line):
         first.pop(1)
         first.pop(-1)
 
-    if first[-1].endswith("'"):
-        first[-1] = first[-1][1:-2]
+    if first[-1].endswith("'") and first[-1].find("', '") != -1:
+        first[-1] = first[-1][1:-2] if first[-1].endswith(")'") else first[-1][1:-1]
         first[-1] = first[-1].replace("', '", "><")
-    else:
+    elif not (first[-1].startswith("'") and first[-1].endswith("'")):
         first[-1] = first[-1].replace(", ", "><")
 
     first.extend(first[-1].split("><"))
@@ -135,6 +145,11 @@ def readFactsAndRules(filename):
         if line.find(":-") == -1:
             # facts
             first = splitFacts(line[:-1])
+            for i in range(len(first)):
+                if first[i].startswith("'"):
+                    first[i] = first[i][1:]
+                if first[i].endswith("'"):
+                    first[i] = first[i][:-1]
             facts.append(Fact(first[0], first[1:]))
             facts[-1].xuat()
         else:
@@ -158,11 +173,30 @@ def readFactsAndRules(filename):
                 item = splitFacts(kb_item)
                 kbs.append(kb(item[0], item[1:]))
             rules.append(Rule(head[0], head[1:], kbs, it))
-            rules[-1].xuat()
     return facts, rules
 
 
-readFactsAndRules("BritishFamily.txt")
+def readQuestions(filename):
+    f = open(filename, "r")
+    datalist = f.readlines()
+    questions = []
+    q = -1
+    for line in datalist:
+        if line.startswith("/*") or line == "" or line == "\n":
+            continue
+        if line.startswith("?- "):
+            first = splitFacts(line[3:-1])
+            for i in range(len(first)):
+                if first[i].find("'") != -1:
+                    q = (len(first) - 1) - i
+                    first[i] = first[i][1:-1]
+            questions.append(SingleQuestion(first[0], first[1:], q))
+            # questions[-1].xuat()
+    return questions
+
+
+# readFactsAndRules("BritishFamily.txt")
+# readQuestions("question.txt")
 # print(splitFacts("(male(Person"))
 # print(splitFacts("parent(Parent, Child"))
 # print(splitFacts("divorced('Princess Diana', 'Prince Charles')."))
