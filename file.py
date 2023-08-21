@@ -5,7 +5,7 @@ class kb:
         self.objs = objects
 
     def xuat(self):
-        print("kb: ", self.name, self.objs)
+        print("kb: ", self.name, self.objs, self.negative)
 
 
 class Fact(kb):
@@ -102,11 +102,20 @@ def splitRules(first, it, index):
         it.extend([1] * (len(temp) - 1))
         return True
 
+    if first[index].find(")); ") != -1:
+        # print("OKKKKKK")
+        temp = first[index].split("); ")
+        first.extend(temp)
+        first.pop(index)
+        first.reverse()
+        it.extend([0] * (len(temp) - 1))
+        return True
+
     if first[index].find("), ") != -1:
         temp = first[index].split("), ")
         first.extend(temp)
         first.pop(index)
-        if len(it) == 1:
+        if len(it) > 1:
             it.extend([1] * (len(temp) - 1))
             # print("ok")
             first.reverse()
@@ -116,16 +125,27 @@ def splitRules(first, it, index):
         return True
 
     if first[index].find("); ") != -1:
-        first.extend(first[index].split("); "))
+        temp = first[index].split("); ")
+        first.extend(temp)
         first.pop(index)
-        it.extend([0])
-        if len(it) == 2:
+        it.extend([0] * (len(temp) - 1))
+        if len(it) > 1:
             first.reverse()
             it.reverse()
         return True
+
     if first[index].find(" \\== ") != -1:
         tmp = first[index].split(" \\== ")
         app = "\\==" + "("
+        for i in tmp:
+            app = app + i + ", "
+        app = app[:-2]
+        first.append(app)
+        first.pop(index)
+
+    if first[index].find(" > ") != -1:
+        tmp = first[index].split(" > ")
+        app = ">" + "("
         for i in tmp:
             app = app + i + ", "
         app = app[:-2]
@@ -139,7 +159,6 @@ def readFactsAndRules(filename):
     datalist = f.readlines()
     facts = []
     rules = []
-    cnt = 0
     for line in datalist:
         if line.startswith("/*") or line == "" or line == "\n":
             continue
@@ -158,8 +177,10 @@ def readFactsAndRules(filename):
             first = line.split(":- ")
             head = splitFacts(first[0])
             head.pop(1)
+            # print(head)
             first.pop(0)
             first[-1] = first[-1][:-1]
+            print("FIRST BAN ĐẦU: ", first)
             it = []
 
             flag = True
@@ -172,8 +193,25 @@ def readFactsAndRules(filename):
             kbs = []
             for kb_item in first:
                 item = splitFacts(kb_item)
-                kbs.append(kb(item[0], item[1:]))
+                negative = False
+                if "~" in item[0]:
+                    negative = True
+                    item[0] = item[0].replace("~", "")
+                if ">" in item[0]:
+                    # print("ITEM: ", item)
+                    if item[2] == "2":
+                        # print("KBS: ", kbs[-1].objs)
+                        kbs[-1].objs[1] = "3"
+                        it.pop()
+                        continue
+                    elif item[2] == "1":
+                        kbs[-1].objs[1] = "2"
+                        item = [kbs[-1].name, kbs[-1].objs[0], "3"]
+                        it.pop()
+                        it.append(0)
+                kbs.append(kb(item[0], item[1:], negative))
             rules.append(Rule(head[0], head[1:], kbs, it))
+            rules[-1].xuat()
     return facts, rules
 
 
@@ -210,3 +248,7 @@ def writeAnswers(filename, answers):
             output = output[:-2]
             output += "\n"
             f.write(output)
+
+
+# facts, rules = readFactsAndRules("company.txt")
+# questions = readQuestions("company-queries.txt")

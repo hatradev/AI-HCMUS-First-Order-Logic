@@ -291,14 +291,6 @@ def solveSingleQuestion(
 
 facts, rules = readFactsAndRules("BritishFamily.txt")
 questions = readQuestions("question.txt")
-# i = 13
-# # for fact in facts:
-# #     fact.xuat()
-# # for rule in rules:
-# #     rule.xuat()
-# # for question in questions:
-# #     question.xuat()
-# print("In KQ: ", solveSingleQuestion(rules, facts, questions[i]))
 
 for ques in questions:
     ques.xuat()
