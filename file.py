@@ -32,14 +32,15 @@ class Rule(kb):
 
 
 class SingleQuestion:
-    def __init__(self, name, objects, pos, canSolve=True):
+    def __init__(self, name, objects, pos, canSolve=True, negative=False):
         self.name = name
         self.pos = pos  # -1 (True, False), 0, 1
         self.objs = objects
         self.canSolve = canSolve
+        self.negative = negative
 
     def xuat(self):
-        print(self.name, self.objs, self.pos)
+        print(self.name, self.objs, self.pos, self.negative)
 
 
 def splitFacts(line, isQ=False):
@@ -180,7 +181,7 @@ def readFactsAndRules(filename):
             # print(head)
             first.pop(0)
             first[-1] = first[-1][:-1]
-            print("FIRST BAN ĐẦU: ", first)
+            # print("FIRST BAN ĐẦU: ", first)
             it = []
 
             flag = True
@@ -211,7 +212,7 @@ def readFactsAndRules(filename):
                         it.append(0)
                 kbs.append(kb(item[0], item[1:], negative))
             rules.append(Rule(head[0], head[1:], kbs, it))
-            rules[-1].xuat()
+            # rules[-1].xuat()
     return facts, rules
 
 
@@ -237,12 +238,12 @@ def readQuestions(filename):
 
 def writeAnswers(filename, answers):
     f = open(filename, "w")
-    print(answers)
+    # print(answers)
     for ans in answers:
         if ans[1] == -1:
             f.write(str(ans[0][1]) + "\n")
         else:
-            output = ans[0][0] + " là: "
+            output = ans[0][0] + " = "
             for res in ans[0][1]:
                 output += res + ", "
             output = output[:-2]

@@ -1,5 +1,18 @@
 from file import *
 
+def containsNumber(value):
+    for character in value:
+        if character.isdigit():
+            return True
+    return False
+
+def allObjects(facts):
+    rt = []
+    for i in range(len(facts)):
+        for obj in facts[i].objs:
+            if obj not in rt and not containsNumber(obj):
+                rt.append(obj)
+    return rt
 
 def findinRules(rules, q: SingleQuestion):
     rt = []
@@ -42,6 +55,22 @@ def solveFact(kbsIndex, facts, q: SingleQuestion):
                 res.append(facts[i].objs[q.pos])
         return res
 
+def solveFactNegative(kbsIndex, facts, q: SingleQuestion):
+    if q.pos == -1:
+        for i in kbsIndex:
+            if q.objs == facts[i].objs:
+                return False
+        return True
+    else:
+        object_list = allObjects(facts)
+        k = len(q.objs) - 1
+        for i in kbsIndex:
+            if facts[i].objs[k - q.pos] == q.objs[k - q.pos] or not k:
+                object_list.remove(facts[i].objs[k - q.pos])
+        return object_list
+        
+        
+
 
 def printSingleQuestion(q: SingleQuestion):
     print("?????????? Câu hỏi ???????????")
@@ -59,7 +88,7 @@ def newQuestion(kbInRule, ruleObjs, varPos, qObjs):
 
     newVar = []  # 0 là hằng, 1 là biến
     newObjs = []
-    print("Là:", kbInRule.name, kbInRule.objs)
+    print("Là:", kbInRule.name, kbInRule.objs, kbInRule.negative)
 
     for i in range(len(kbInRule.objs)):
         print("tìm", kbInRule.objs[i], "trong rule")
@@ -90,7 +119,7 @@ def newQuestion(kbInRule, ruleObjs, varPos, qObjs):
         pos = newVar.index(2)
         if sum(newVar) > 2:
             canSolve = False
-    return SingleQuestion(kbInRule.name, newObjs, pos, canSolve)
+    return SingleQuestion(kbInRule.name, newObjs, pos, canSolve, kbInRule.negative)
 
 
 def solveStackQuestions(
@@ -238,7 +267,12 @@ def solveSingleQuestion(
     kbsIndex = findinRules(rules, q)
     if len(kbsIndex) == 0:  # Facts
         kbsIndex = findinFacts(facts, q)
-        return q.objs[q.pos] if q.pos != -1 else "T/F", solveFact(kbsIndex, facts, q)
+        if q.negative == False:
+            return q.objs[q.pos] if q.pos != -1 else "T/F", solveFact(kbsIndex, facts, q)
+        else:
+            return q.objs[q.pos] if q.pos != -1 else "T/F", solveFactNegative(kbsIndex, facts, q)
+            
+            
     # Rules
     final_result = [None] * len(kbsIndex)
 
@@ -289,8 +323,11 @@ def solveSingleQuestion(
         return result[0][0], result[0][1]
 
 
-facts, rules = readFactsAndRules("BritishFamily.txt")
-questions = readQuestions("question.txt")
+# facts, rules = readFactsAndRules("BritishFamily.txt")
+# questions = readQuestions("question.txt")
+
+facts, rules = readFactsAndRules("company.txt")
+questions = readQuestions("company-queries.txt")
 
 for ques in questions:
     ques.xuat()
@@ -300,4 +337,4 @@ for i in range(len(questions)):
     answers.append([solveSingleQuestion(rules, facts, questions[i]), questions[i].pos])
 # answers.append(solveSingleQuestion(rules, facts, questions[i]))
 # print(len(questions))
-writeAnswers("answer.txt", answers)
+writeAnswers("answer2.txt", answers)

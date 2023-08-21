@@ -1,0 +1,10 @@
+X = Andy, Peter, Jasper, Jason, Drake, Michael, Matthew, Jack, Finn, Dominic, Baron
+True
+True
+X = Jack, Jason
+False
+False
+True
+False
+X = Drake, Michael, Peter, Dominic, Ethelbert
+X = Matthew, Jack, Finn, Dominic
