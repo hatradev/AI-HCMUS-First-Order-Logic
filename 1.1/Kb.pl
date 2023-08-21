@@ -1,15 +1,15 @@
 % parent predicate
 % Queen Elizabeth II's children
-parent('Queen Elizabeth II', 'Prince Charles').
-parent('Queen Elizabeth II', 'Prince Andrew').
-parent('Queen Elizabeth II', 'Prince Edward').
-parent('Queen Elizabeth II', 'Princess Anne').
+parent('Queen Elizabeth II','Prince Charles').
+parent('Queen Elizabeth II','Prince Andrew').
+parent('Queen Elizabeth II','Prince Edward').
+parent('Queen Elizabeth II','Princess Anne').
 
 % Prince Philip's children
-parent('Prince Philip', 'Prince Charles').
-parent('Prince Philip', 'Prince Andrew').
-parent('Prince Philip', 'Prince Edward').
-parent('Prince Philip', 'Princess Anne').
+parent('Prince Philip','Prince Charles').
+parent('Prince Philip','Prince Andrew').
+parent('Prince Philip','Prince Edward').
+parent('Prince Philip','Princess Anne').
 
 % Princess Diana's children
 parent('Princess Diana', 'Prince William').
@@ -34,10 +34,10 @@ parent('Sarah Ferguson', 'Princess Eugenie').
 
 % Prince Edward's children
 parent('Prince Edward', 'Lady Louise Mountbatten-Windsor').
-parent('Prince Edward', 'James, Viscount Severn').
+parent('Prince Edward',  'James, Viscount Severn').
 % Sophie Rhys-Jones's children
 parent('Sophie Rhys-Jones', 'Lady Louise Mountbatten-Windsor').
-parent('Sophie Rhys-Jones', 'James, Viscount Severn').
+parent('Sophie Rhys-Jones',  'James, Viscount Severn').
 
 % Prince William's children
 parent('Prince William', 'Prince George').
@@ -74,7 +74,6 @@ female('Autumn Kelly').
 female('Isla Phillips').
 female('Savannah Phillips').
 female('Zara Phillips').
-female('Mia Grace Tindall').
 
 % male predicate
 male('Prince Philip').
@@ -96,15 +95,15 @@ married('Prince Philip', 'Queen Elizabeth II').
 married('Queen Elizabeth II', 'Prince Philip').
 married('Prince Charles', 'Camilla Parker Bowles').
 married('Camilla Parker Bowles', 'Prince Charles').
-married('Prince William', 'Kate Middleton').
+married('Prince William','Kate Middleton').
 married('Kate Middleton', 'Prince William').
 married('Prince Edward', 'Sophie Rhysjones').
-married('Sophie Rhysjones', 'Prince Edward').
-married('Princess Anne', 'Timothy Laurence').
+married('Sophie Rhysjones', 'Prince Edward') .
+married('Princess Anne','Timothy Laurence').
 married('Timothy Laurence', 'Princess Anne').
-married('Peter Phillips', 'Autumn Kelly').
+married('Peter Phillips','Autumn Kelly').
 married('Autumn Kelly', 'Peter Phillips').
-married('Zara Phillips', 'Mike Tindall').
+married('Zara Phillips','Mike Tindall').
 married('Zara Phillips', 'Mike Tindall').
 
 % divorced predicate
@@ -115,26 +114,38 @@ divorced('Captain Mark Phillips', 'Princess Anne').
 divorced('Sarah Ferguson', 'Prince Andrew').
 divorced('Prince Andrew', 'Sarah Ferguson').
 
-% Rules
-husband(person, wife) :- male(person), married(person, wife).
-wife(person, husband) :- female(person), married(husband, person).
-father(parent, child) :- male(parent), parent(parent, child).
-mother(parent, child) :- female(parent), parent(parent, child).
-child(child, parent) :- parent(parent, child).
-son(child, parent) :- male(child), parent(parent, child).
-daughter(child, parent) :- female(child), parent(parent, child).
+father(Parent,Child) :- parent(Parent,Child), male(Parent).
+mother(Parent,Child) :- parent(Parent,Child), female(Parent).
 
-grandparent(gp, gc) :- parent(gp, p), parent(p, gc).
-grandmother(gm, gc) :- female(gm), grandparent(gm, gc).
-grandfather(gf, gc) :- male(gf), grandparent(gf, gc).
-grandchild(gc, gp) :- grandparent(gp, gc).
-grandson(gs, gp) :- male(gs), grandchild(gs, gp).
-granddaughter(gd, gp) :- female(gd), grandchild(gd, gp).
+husband(Person,Wife) :- married(Person,Wife), male(Person).
+wife(Person,Husband) :- married(Person,Husband), female(Person).
 
-sibling(sibling, person) :- parent(parent, sibling), parent(parent, person).
-brother(person, sibling) :- male(person), sibling(person, sibling).
-sister(person, sibling) :- female(person), sibling(person, sibling).
-aunt(person, nieceNephew) :- female(person), sibling(person, parent), parent(parent, nieceNephew).
-uncle(person, nieceNephew) :- male(person), sibling(person, parent), parent(parent, nieceNephew).
-niece(person, auntUncle) :- female(person), parent(parent, person), sibling(parent, auntUncle).
-nephew(person, auntUncle) :- male(person), parent(parent, person), sibling(parent, auntUncle).
+child(Child,Parent) :- parent(Parent,Child).
+son(Child,Parent) :- child(Child,Parent), male(Child).
+daughter(Child,Parent) :- child(Child,Parent), female(Child).
+
+grandparent(GP,GC) :- parent(GP,Parent), parent(Parent,GC).
+grandmother(GM,GC) :- grandparent(GM,GC), female(GM).
+grandfather(GF,GC) :- grandparent(GF,GC), male(GF).
+
+grandchild(GC,GP) :- grandparent(GP,GC).
+grandson(GS,GP) :- grandchild(GS,GP),male(GS).
+granddaughter(GD,GP) :- grandchild(GD,GP), female(GD).
+
+
+sibling(Sibling, Person) :-
+    setof(S, P^(parent(P, Person), parent(P, S), Person \= S), Siblings),
+    member(Sibling, Siblings).
+brother(Person, Sibling) :- male(Person), sibling(Person, Sibling).
+sister(Person, Sibling) :- female(Person), sibling(Person, Sibling).
+aunt(Person, NieceNephew) :- female(Person), sibling(Person, Parent), parent(Parent, NieceNephew).
+uncle(Person, NieceNephew) :- male(Person), sibling(Person, Parent), parent(Parent, NieceNephew).
+niece(Person, AuntUncle) :- female(Person), parent(Parent, Person), sibling(Parent, AuntUncle).
+nephew(Person, AuntUncle) :- male(Person), parent(Parent, Person), sibling(Parent, AuntUncle).
+
+
+
+
+
+
+

@@ -1,25 +1,25 @@
-class kb:
+class KB:
     def __init__(self, name, objects, negative=False):
         self.name = name
         self.negative = negative
         self.objs = objects
 
     def xuat(self):
-        print("kb: ", self.name, self.objs, self.negative)
+        print("KB: ", self.name, self.objs, self.negative)
 
 
-class Fact(kb):
+class Fact(KB):
     def __init__(self, name, objects, negative=False):
-        kb.__init__(self, name, objects, negative)
+        KB.__init__(self, name, objects, negative)
 
     def xuat(self):
         print(self.name, ": ", self.objs)
         print("\n")
 
 
-class Rule(kb):
+class Rule(KB):
     def __init__(self, name, objects, kbs, operator, negative=False, isDistinct=False):
-        kb.__init__(self, name, objects, negative)
+        KB.__init__(self, name, objects, negative)
         self.opr = operator
         self.kbs = kbs
         self.isDistinct = isDistinct
@@ -104,7 +104,6 @@ def splitRules(first, it, index):
         return True
 
     if first[index].find(")); ") != -1:
-        # print("OKKKKKK")
         temp = first[index].split("); ")
         first.extend(temp)
         first.pop(index)
@@ -172,16 +171,13 @@ def readFactsAndRules(filename):
                 if first[i].endswith("'"):
                     first[i] = first[i][:-1]
             facts.append(Fact(first[0], first[1:]))
-            # facts[-1].xuat()
         else:
             # rules
             first = line.split(":- ")
             head = splitFacts(first[0])
             head.pop(1)
-            # print(head)
             first.pop(0)
             first[-1] = first[-1][:-1]
-            # print("FIRST BAN ĐẦU: ", first)
             it = []
 
             flag = True
@@ -199,9 +195,7 @@ def readFactsAndRules(filename):
                     negative = True
                     item[0] = item[0].replace("~", "")
                 if ">" in item[0]:
-                    # print("ITEM: ", item)
                     if item[2] == "2":
-                        # print("KBS: ", kbs[-1].objs)
                         kbs[-1].objs[1] = "3"
                         it.pop()
                         continue
@@ -210,9 +204,8 @@ def readFactsAndRules(filename):
                         item = [kbs[-1].name, kbs[-1].objs[0], "3"]
                         it.pop()
                         it.append(0)
-                kbs.append(kb(item[0], item[1:], negative))
+                kbs.append(KB(item[0], item[1:], negative))
             rules.append(Rule(head[0], head[1:], kbs, it))
-            # rules[-1].xuat()
     return facts, rules
 
 
@@ -232,13 +225,11 @@ def readQuestions(filename):
                 else:
                     q = i - 1 if i != 0 else -1
             questions.append(SingleQuestion(first[0], first[1:], q))
-            # questions[-1].xuat()
     return questions
 
 
 def writeAnswers(filename, answers):
     f = open(filename, "w")
-    # print(answers)
     for ans in answers:
         if ans[1] == -1:
             f.write(str(ans[0][1]) + "\n")
@@ -249,7 +240,3 @@ def writeAnswers(filename, answers):
             output = output[:-2]
             output += "\n"
             f.write(output)
-
-
-# facts, rules = readFactsAndRules("company.txt")
-# questions = readQuestions("company-queries.txt")

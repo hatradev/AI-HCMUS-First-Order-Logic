@@ -1,0 +1,102 @@
+/*
+ *  FACTS ABOUT COMPANY ORGS.
+ */
+
+cLevel('Andy').
+cLevel('Peter').
+
+manager('Jasper').
+manager('Jason').
+manager('Drake').
+manager('Michael').
+
+employee('Matthew').
+employee('Amyas').
+employee('Jack').
+employee('Finn').
+employee('Dominic').
+
+internship('Baron').
+internship('Ethelbert').
+
+workRemote('Amyas').
+workRemote('Finn').
+
+senior('Matthew').
+senior('Dominic').
+senior('Finn').
+
+female('Amyas').
+female('Ethelbert').
+
+leadOf('Matthew', 'Jasper').
+leadOf('Amyas', 'Jasper').
+leadOf('Baron', 'Jasper').
+leadOf('Jack', 'Jason').
+leadOf('Finn', 'Jasper').
+leadOf('Dominic', 'Michael').
+leadOf('Ethelbert', 'Michael').
+leadOf('Jasper', 'Andy').
+leadOf('Jason', 'Andy').
+leadOf('Drake', 'Peter').
+leadOf('Michael', 'Peter').
+
+managementAbility('Matthew').
+managementAbility('Finn').
+
+valuable('Jack').
+valuable('Dominic').
+valuable('Baron').
+
+hadMarriage('Jack').
+hadMarriage('Dominic').
+hadMarriage('Matthew').
+hadMarriage('Finn').
+
+single('Jasper').
+single('Baron').
+single('Finn').
+single('Michael').
+single('Ethelbert').
+
+experiment('Jack', 3).
+experiment('Amyas', 2).
+experiment('Baron', 1).
+experiment('Dominic', 2).
+experiment('Ethelbert', 1).
+
+onProbation('Finn').
+onProbation('Dominic').
+
+ /* 
+ *  RULES ABOUT COMPANY ORGS.
+ */
+male(X) :- not(female(X)).
+abilityToPromote(X) :- not(cLevel(X)).
+workAtOffice(X) :- not(workRemote(X)).
+commingEmployee(X) :- (internship(X);onProbation(X)), valuable(X).
+commingSenior(X) :- abilityToPromote(X), not(manager(X); senior(X); internship(X)), valuable(X), experiment(X, ExpYear), ExpYear > 2.
+commingManager(X) :- senior(X), managementAbility(X), valuable(X), workAtOffice(X).
+
+highSalary(X):- manager(X);cLevel(X);senior(X).
+mediumSalary(X):- not(highSalary(X)), not(internship(X)).
+lowSalary(X) :- internship(X).
+
+lineTrainer(X,Y) :- internship(X), manager(Y), leadOf(X,Y).
+givingTask(X,Y) :- leadOf(X,Y).
+directlyFinishTask(X) :- leadOf(X,Y), manager(Y).
+easyFinishTask(X) :- experiment(X, Y), Y > 1.
+
+sameTeam(X,Y) :- (leadOf(X,Z), leadOf(Y,Z));leadOf(X,Y);leadOf(Y,X).
+
+needBoyfriend(X) :- female(X), single(X).
+needGirlfriend(X) :- male(X), single(X).
+
+hasWife(X) :- male(X), hadMarriage(X).
+hadHusband(X) :- female(X), hadMarriage(X).
+
+hadTrust(X) :- workRemote(X), valuable(X).
+
+layoff(X) :- not(cLevel(X)), highSalary(X), not(valuable(X)).
+
+

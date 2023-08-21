@@ -1,0 +1,79 @@
+1. Who are the c-level employees?
+findall(CLevel, cLevel(CLevel), CLevels).
+CLevels = ['Andy', 'Peter']
+
+2. Is Drake a manager?
+manager('Drake').
+true
+
+3. Who are the employees under Jasper?
+findall(Employee, leadOf(Employee, 'Jasper'), EmployeesUnderJasper).
+EmployeesUnderJasper = ['Matthew', 'Amyas', 'Baron', 'Finn']
+
+4. Does Amyas work remotely?
+workRemote('Amyas').
+true
+
+5. Is Matthew a senior?
+senior('Matthew').
+true
+
+6. Who are the male employees?
+findall(Employee, (employee(Employee),male(Employee)), MaleEmployees).
+MaleEmployees = ['Matthew', 'Jack', 'Finn', 'Dominic']
+
+7. Who are the employees who need a boyfriend?
+findall(Employee, needBoyfriend(Employee), EmployeesNeedBoyfriend).
+EmployeesNeedBoyfriend = ['Ethelbert']
+
+8. Does Finn have a wife?
+hasWife('Finn').
+true
+
+9. Will Amyas be senior?
+commingSenior('Amyas').
+false
+
+10. Who are the valuable employees?
+findall(Employee, valuable(Employee), ValuableEmployees).
+ValuableEmployees = ['Jack', 'Dominic', 'Baron']
+
+11. Is Ethelbert on probation?
+onProbation('Ethelbert').
+false
+
+12. Is Jack's experiment more than 2 years?
+experiment('Jack', Years).
+Years = 3
+
+13. Who are the managers that lead employees?
+findall(Manager, leadOf(_, Manager), ManagersLeadingEmployees).
+ManagersLeadingEmployees = ['Jasper', 'Jasper', 'Jasper', 'Jason', 'Jasper', 'Michael', 'Michael', 'Andy', 'Andy', 'Peter', 'Peter']
+
+14. Will Dominic be a manager?
+commingManager('Dominic').
+false
+
+15. Is Jason single?
+single('Jason').
+false
+
+16. Who has had a marriage?
+findall(Employee, hadMarriage(Employee), EmployeesWithMarriage).
+EmployeesWithMarriage = ['Jack', 'Dominic', 'Matthew', 'Finn']
+
+17. Is Baron an intern?
+internship('Baron').
+true
+
+18. Who can directly finish tasks?
+findall(Employee, directlyFinishTask(Employee), EmployeesDirectlyFinishTasks).
+EmployeesDirectlyFinishTasks = ['Matthew', 'Amyas', 'Baron', 'Jack', 'Finn', 'Dominic', 'Ethelbert']
+
+19. Will Michael lay off?
+layoff('Michael').
+true
+
+20. Who is a line trainer for interns?
+findall(LineTrainer, lineTrainer(LineTrainer, _), LineTrainers).
+LineTrainers = ['Baron', 'Ethelbert']

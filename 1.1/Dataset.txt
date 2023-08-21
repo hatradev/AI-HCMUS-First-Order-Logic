@@ -1,0 +1,121 @@
+% Who are Mike Tindall's children?
+findall(Child, child(Child, 'Mike Tindall'), Children).
+Children = ['Mia Grace Tindall']
+
+% Is Prince Philip male?
+male('Prince Philip').
+true
+
+% Who is the husband of Queen Elizabeth II?
+husband(Husband, 'Queen Elizabeth II').
+Husband = 'Prince Philip'
+
+% Who is the wife of Prince Edward?
+wife(Wife, 'Prince Edward').
+Wife = 'Sophie Rhysjones'
+
+% Who is the father of Princess Beatrice?
+father(Father, 'Princess Beatrice').
+Father = 'Prince Andrew'
+
+% Who is the mother of Princess Charlotte?
+mother(Mother, 'Princess Charlotte').
+Mother = 'Kate Middleton'
+
+% Who is the uncle of Peter Phillips?
+uncle(Uncle, 'Peter Phillips').
+Uncle = 'Prince Charles'
+Uncle = 'Prince Andrew'
+Uncle = 'Prince Edward'
+
+% Who are the children of Prince Andrew and Sarah Ferguson?
+findall(Child, (child(Child, 'Prince Andrew'), child(Child, 'Sarah Ferguson')), Children).
+Children = ['Princess Beatrice', 'Princess Eugenie']
+
+% Who is Princess Anne's husband?
+husband(Husband, 'Princess Anne').
+Husband = 'Timothy Laurence'
+
+% Who is Princess Beatrice's father?
+father(Father, 'Princess Beatrice').
+Father = 'Prince Andrew'
+
+% Is Queen Elizabeth II the wife of Prince Philip?
+wife('Queen Elizabeth II', 'Prince Edward').
+false
+
+% Is Prince Charles the husband of Kate Middleton?
+husband('Prince Charles', 'Kate Middleton').
+false
+
+% Was Prince Charles ever married to Princess Diana?
+married('Prince Charles', 'Princess Diana'); divorced('Prince Charles', 'Princess Diana').
+true
+
+% Is Sarah Ferguson divorced from Prince Andrew?
+divorced('Sarah Ferguson', 'Prince Andrew').
+true
+
+% Who are Princess Diana's grandsons?
+findall(Grandson, grandson(Grandson, 'Princess Diana'), Grandsons).
+Grandsons = ['Prince George']
+
+% Who is Prince Andrew's ex-wife?
+female(Exwife), divorced(Exwife, 'Prince Andrew').
+Exwife = 'Sarah Ferguson'
+
+% Who are the granddaughters of Princess Anne?
+findall(Granddaughter, granddaughter(Granddaughter, 'Prince Philip'), Granddaughters).
+Granddaughters = ['Princess Beatrice', 'Princess Eugenie', 'Zara Phillips']
+
+% Who are the grandsons of Prince Philip?
+findall(Grandson, grandson(Grandson, 'Prince Philip'), Grandsons).
+Grandsons = ['Prince William', 'Prince Harry', 'Peter Phillips']
+
+% Is Prince Philip divorced?
+divorced(_, 'Prince Philip').
+false
+
+% Who is Captain Mark Phillips' son?
+son(Son, 'Captain Mark Phillips').
+Son = 'Peter Phillips'
+
+% Who is the  Zara Phillips' grandfather?
+grandfather(Grandfather, 'Zara Phillips').
+Grandfather = 'Prince Philip'
+
+% Who are the grandparent of Mia Grace Tindall?
+findall(Grandparent, grandparent(Grandparent, 'Mia Grace Tindall'), Grandparent).
+Grandparent = ['Captain Mark Phillips', 'Princess Anne']
+
+% Is Queen Elizabeth II the wife of Prince Philip?
+wife('Queen Elizabeth II', 'Prince Philip'), married('Queen Elizabeth II', 'Prince Philip').
+true
+
+% Was Queen Elizabeth the wife of Mia Grace Tindall?
+wife('Queen Elizabeth II', 'Mia Grace Tindall'), divorced('Queen Elizabeth II', 'Mia Grace Tindall').
+false
+
+% Who are the nieces/nephews of Prince Charles?
+findall(Nibling, niece(Nibling, 'Prince Charles'); nephew(Nibling, 'Prince Charles'), Niblings).
+Niblings = ['Princess Beatrice', 'Princess Eugenie', 'Zara Phillips', 'Peter Phillips']
+
+% Who are Princess Beatrice's siblings?
+findall(Sibling, sibling(Sibling, 'Princess Beatrice'), Siblings).
+Siblings = ['Princess Eugenie']
+
+% Is Zara Phillips an aunt?
+aunt('Zara Phillips', _).
+true
+
+% Is Prince Harry a brother of Princess Eugenie?
+brother('Prince Harry', 'Princess Eugenie').
+false
+
+% Who is Isla Phillips' sister?
+sister(Sister, 'Isla Phillips').
+Sister = 'Savannah Phillips'
+
+% Who are Lady Louise Mountbatten-Windsor's uncle?
+findall(Uncle, uncle(Uncle, 'Lady Louise Mountbatten-Windsor'), Uncles).
+Uncles = ['Prince Charles', 'Prince Andrew']
