@@ -32,7 +32,7 @@ class Rule(kb):
 
 
 class SingleQuestion:
-    def __init__(self, name, objects, pos, canSolve = True):
+    def __init__(self, name, objects, pos, canSolve=True):
         self.name = name
         self.pos = pos  # -1 (True, False), 0, 1
         self.objs = objects
@@ -42,7 +42,7 @@ class SingleQuestion:
         print(self.name, self.objs, self.pos)
 
 
-def splitFacts(line, isQ = False):
+def splitFacts(line, isQ=False):
     first = line.split("(")
     if "" in first:
         first.remove("")
@@ -191,15 +191,22 @@ def readQuestions(filename):
                 if first[i].find("'") != -1:
                     first[i] = first[i][1:-1]
                 else:
-                    q = i-1 if i != 0 else -1
+                    q = i - 1 if i != 0 else -1
             questions.append(SingleQuestion(first[0], first[1:], q))
             # questions[-1].xuat()
     return questions
 
 
-# readFactsAndRules("BritishFamily.txt")
-# readQuestions("question.txt")
-# print(splitFacts("(male(Person"))
-# print(splitFacts("parent(Parent, Child"))
-# print(splitFacts("divorced('Princess Diana', 'Prince Charles')."))
-# print(splitFacts("male('James, Viscount Severn')."))
+def writeAnswers(filename, answers):
+    f = open(filename, "w")
+    print(answers)
+    for ans in answers:
+        if ans[1] == -1:
+            f.write(str(ans[0][1]) + "\n")
+        else:
+            output = ans[0][0] + " là: "
+            for res in ans[0][1]:
+                output += res + ", "
+            output = output[:-2]
+            output += "\n"
+            f.write(output)

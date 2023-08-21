@@ -1,0 +1,31 @@
+X là: Timothy Laurence
+X là: Queen Elizabeth II
+X là: Prince Andrew
+X là: Queen Elizabeth II
+X là: Peter Phillips, Zara Phillips
+X là: James, Viscount Severn
+X là: Savannah Phillips, Isla Phillips
+X là: Queen Elizabeth II, Prince Phillip
+X là: Princess Anne
+X là: Prince Charles
+X là: Prince William, Prince Harry, Peter Phillips, Zara Phillips, Princess Beatrice, Princess Eugenie, James, Viscount Severn, Lady Louise Mountbatten-Windsor
+X là: Prince George
+X là: Savannah Phillips, Isla Phillips, Mia Grace Tindall
+X là: Savannah Phillips
+X là: Prince William
+X là: Prince Charles, Prince Andrew, Prince Edward
+X là: Camilla Parker Bowles, Sophie Rhys-jones, Princess Anne
+X là: Prince Charles, Prince Andrew, Prince Edward
+X là: Zara Phillips, Lady Louise Mountbatten-Windsor
+X là: Prince William, Prince Harry, Peter Phillips
+False
+True
+True
+True
+False
+True
+False
+True
+True
+False
+False

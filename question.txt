@@ -1,3 +1,4 @@
+% ***************** WHO? Questions ************************
 ?- husband(X, 'Princess Anne')
 ?- wife(X, 'Prince Phillip')
 ?- father(X, 'Princess Eugenie')
@@ -14,7 +15,20 @@
 ?- sibling(X, 'Isla Phillips')
 ?- brother(X, 'Prince Harry')
 ?- sister('Princess Anne', X)
-?- aunt('Princess Anne', 'Princess Beatrice')
+?- aunt(X, 'Princess Beatrice')
 ?- uncle(X, 'Peter Phillips')
 ?- niece(X, 'Prince Andrew')
 ?- nephew(X, 'Prince Edward')
+
++% ***************** T/F Questions ************************
+?- husband('Captain Mark Phillips', 'Princess Anne')
+?- husband('Timothy Laurence', 'Princess Anne')
+?- wife('Kate Middleton', 'Prince William')
+?- father('Prince Andrew', 'Princess Eugenie')
+?- mother('Zara Phillips', 'Autumn Kelly')
+?- child('Peter Phillips', 'Princess Anne')
+?- son('Lady Louise Mountbatten-Windsor', 'Prince Edward')
+?- daughter('Isla Phillips', 'Peter Phillips')
+?- grandparent('Prince Phillip', 'Prince Harry')
+?- grandmother('Sarah Ferguson', 'Isla Phillips')
+?- nephew('Sarah Ferguson', 'Prince Edward')

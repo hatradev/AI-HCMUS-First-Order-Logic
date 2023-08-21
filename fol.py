@@ -1,57 +1,5 @@
 from file import *
 
-# facts = []
-# Gender
-# facts.append(Fact("Male", ["Tra"]))
-# facts.append(Fact("Female", ["Giang"]))
-# facts.append(Fact("Female", ["Trinh"]))
-# facts.append(Fact("Male", ["L"]))
-# facts.append(Fact("Female", ["Huong"]))
-# facts.append(Fact("Male", ["Tu"]))
-# facts.append(Fact("Male", ["Tac"]))
-# facts.append(Fact("Female", ["Xanh"]))
-
-# # Parent
-# facts.append(Fact("Parent", ["Tac", "L"]))
-# facts.append(Fact("Parent", ["Xanh", "L"]))
-# facts.append(Fact("Parent", ["Tac", "Tu"]))
-# facts.append(Fact("Parent", ["Xanh", "Tu"]))
-# facts.append(Fact("Parent", ["L", "Tra"]))
-# facts.append(Fact("Parent", ["L", "Giang"]))
-# facts.append(Fact("Parent", ["L", "Trinh"]))
-# facts.append(Fact("Parent", ["Huong", "Tra"]))
-# facts.append(Fact("Parent", ["Huong", "Giang"]))
-# facts.append(Fact("Parent", ["Huong", "Trinh"]))
-
-# # Marriage
-# facts.append(Fact("Married", ["L", "Huong"]))
-# facts.append(Fact("Divorced", ["L", "Huong"]))
-# facts.append(Fact("Married", ["Tac", "Xanh"]))
-
-# rules = []
-# rules.append(
-#     Rule("Father", ["F", "C"], [kb("Male", ["F"]), kb("Parent", ["F", "C"])], [1])
-# )
-# rules.append(
-#     Rule("Mother", ["M", "C"], [kb("Female", ["M"]), kb("Parent", ["M", "C"])], [1])
-# )
-# rules.append(
-#     Rule(
-#         "GrandFather",
-#         ["GF", "GC"],
-#         [kb("Father", ["GF", "X"]), kb("Parent", ["X", "GC"])],
-#         [1],
-#     )
-# )
-# rules.append(
-#     Rule(
-#         "GrandMother",
-#         ["GM", "GC"],
-#         [kb("Mother", ["GM", "X"]), kb("Parent", ["X", "GC"])],
-#         [1],
-#     )
-# )
-
 
 def findinRules(rules, q: SingleQuestion):
     rt = []
@@ -105,6 +53,7 @@ def common_member(a, b):
     result = [i for i in a if i in b]
     return result
 
+
 def newQuestion(kbInRule, ruleObjs, varPos, qObjs):
     idx = -1
 
@@ -144,25 +93,30 @@ def newQuestion(kbInRule, ruleObjs, varPos, qObjs):
     return SingleQuestion(kbInRule.name, newObjs, pos, canSolve)
 
 
-def solveStackQuestions(rules, facts, result, questions: [SingleQuestion], qIndex, operator):
+def solveStackQuestions(
+    rules, facts, result, questions: [SingleQuestion], qIndex, operator
+):
     idx = -1
     rt = []
-    
+
     print("Stack Q: ")
     printSingleQuestion(questions[qIndex])
-    
+
     for a in range(len(result)):
         ans = result[a]
         print("Với kết quả này", ans)
-        if ans != None and ans[0] != "T/F" and ans[0] == questions[qIndex].objs[1-questions[qIndex].pos]: 
-            
+        if (
+            ans != None
+            and ans[0] != "T/F"
+            and ans[0] == questions[qIndex].objs[1 - questions[qIndex].pos]
+        ):
             if len(ans[1]) <= 0:
-                if operator[a-1 if a >= len(result) - 1 else a] == 1:
+                if operator[a - 1 if a >= len(result) - 1 else a] == 1:
                     print("Gặp rỗng -> loại")
                     return questions[qIndex].objs[questions[qIndex].pos], ans[1]
                 else:
                     print("Gặp rỗng -> bỏ qua")
-            else:        
+            else:
                 # Tìm xem question qIndex có giải được không
                 try:
                     idx = questions[qIndex].objs.index(ans[0])
@@ -179,14 +133,15 @@ def solveStackQuestions(rules, facts, result, questions: [SingleQuestion], qInde
                         rt.append((solveSingleQuestion(rules, facts, oldQ, [])))
                         print("RT: ", rt)
                     break
-            
-    
+
     if idx == -1:
         print("Nghỉ khỏi giải, sao mà giải được")
         return None
-    
-    rt = combineResult(rt, [0]*(len(rt)-1), questions[qIndex].objs[questions[qIndex].pos])
-    
+
+    rt = combineResult(
+        rt, [0] * (len(rt) - 1), questions[qIndex].objs[questions[qIndex].pos]
+    )
+
     return rt[0][0], rt[0][1]
 
 
@@ -195,10 +150,10 @@ def combineOne(op, ans, expect):
         idx = 0
     else:
         idx = 1
-    
+
     convertTF = []
     convertList = []
-    
+
     for a in ans:
         if (a[0] == "T/F" and a[1] == False) or (a[0] != "T/F" and len(a[1]) == 0):
             convertTF.append(False)
@@ -206,22 +161,42 @@ def combineOne(op, ans, expect):
         else:
             convertTF.append(True)
             convertList.append(ans[idx][1] if a[0] == "T/F" else a[1])
-        
+
     if op == 1:  # and
         if ans[idx][0] == "T/F":
             print("Case 1")
-            return ("T/F", ans[idx][1] and (ans[1-idx][1] if ans[1-idx][0] == "T/F" else convertTF[1-idx]))
-        elif ans[1-idx][0] != "T/F" and ans[1-idx][0] != ans[idx][0]:
+            return (
+                "T/F",
+                ans[idx][1]
+                and (
+                    ans[1 - idx][1] if ans[1 - idx][0] == "T/F" else convertTF[1 - idx]
+                ),
+            )
+        elif ans[1 - idx][0] != "T/F" and ans[1 - idx][0] != ans[idx][0]:
             print("Case 2")
             return ans[idx]
         else:
             print("Case 3")
-            return (ans[idx][0], common_member(ans[idx][1], ans[1-idx][1] if ans[1-idx][0] != "T/F" else convertList[1-idx]))
-    else: #or
+            return (
+                ans[idx][0],
+                common_member(
+                    ans[idx][1],
+                    ans[1 - idx][1]
+                    if ans[1 - idx][0] != "T/F"
+                    else convertList[1 - idx],
+                ),
+            )
+    else:  # or
         if ans[idx][0] == "T/F":
             print("Case 1")
-            return ("T/F", ans[idx][1] or (ans[1-idx][1] if ans[1-idx][0] == "T/F" else convertTF[1-idx]))
-        elif ans[1-idx][0] == "T/F":
+            return (
+                "T/F",
+                ans[idx][1]
+                or (
+                    ans[1 - idx][1] if ans[1 - idx][0] == "T/F" else convertTF[1 - idx]
+                ),
+            )
+        elif ans[1 - idx][0] == "T/F":
             print("Case 2")
             return ans[idx]
         else:
@@ -229,7 +204,10 @@ def combineOne(op, ans, expect):
             tmp = []
             tmp.extend(ans[0][1])
             tmp.extend(ans[1][1])
-            return (ans[idx][0], list(dict.fromkeys(tmp)) if ans[0][0] == ans[1][0] else ans[idx][1])
+            return (
+                ans[idx][0],
+                list(dict.fromkeys(tmp)) if ans[0][0] == ans[1][0] else ans[idx][1],
+            )
 
 
 def combineResult(result, operator, expect):
@@ -244,7 +222,7 @@ def combineResult(result, operator, expect):
             continue
         rt[0] = combineOne(operator[j - 1], [rt[0], result[j]], expect)
         print("Thử nào: ", rt)
-        
+
     print("Kết quả sau khi combine: ", rt)
     if expect == "T/F" and type(rt[0][1]) == list:
         if len(rt[0][1]) == 0:
@@ -254,40 +232,42 @@ def combineResult(result, operator, expect):
     return rt
 
 
-def solveSingleQuestion(rules, facts, q: SingleQuestion, questions: [SingleQuestion] = []):
+def solveSingleQuestion(
+    rules, facts, q: SingleQuestion, questions: [SingleQuestion] = []
+):
     kbsIndex = findinRules(rules, q)
-    if len(kbsIndex) == 0: #Facts
+    if len(kbsIndex) == 0:  # Facts
         kbsIndex = findinFacts(facts, q)
         return q.objs[q.pos] if q.pos != -1 else "T/F", solveFact(kbsIndex, facts, q)
     # Rules
-    final_result = [None]*len(kbsIndex)
+    final_result = [None] * len(kbsIndex)
 
     for kbI in kbsIndex:  # duyệt trong rules
-        result = [None]*len(rules[kbI].kbs)
-        questions = [None]*len(rules[kbI].kbs)
+        result = [None] * len(rules[kbI].kbs)
+        questions = [None] * len(rules[kbI].kbs)
         # Duyệt qua từng kb nhỏ trong kbs lớn
         for k in range(len(rules[kbI].kbs)):
             kb = rules[kbI].kbs[k]
             printSingleQuestion(q)
             print("Stack: ", questions)
-            print("Rule thứ ", k+1)
+            print("Rule thứ ", k + 1)
 
             # tạo câu hỏi mới
             newQ = newQuestion(kb, rules[kbI].objs, q.pos, q.objs)
             printSingleQuestion(newQ)
 
-            if newQ.canSolve == False: #Không giải được
+            if newQ.canSolve == False:  # Không giải được
                 questions[k] = newQ
                 print("Đéo giải được thêm vào stack")
                 continue
             else:
                 key, res = solveSingleQuestion(rules, facts, newQ, questions)
                 print("//////////////TRẢ LỜI/////////////////")
-                print("Trả lời câu hỏi thứ", k+1, key, res)
+                print("Trả lời câu hỏi thứ", k + 1, key, res)
                 if newQ.pos != -1:
-                    result[k]=(key, res)
+                    result[k] = (key, res)
                 else:
-                    result[k]=(key, res)
+                    result[k] = (key, res)
                 print("Thêm vào: ", result)
         # result = combineResult(
         #     result, rules[kbI].opr, q.objs[q.pos] if q.pos != -1 else "T/F"
@@ -297,45 +277,35 @@ def solveSingleQuestion(rules, facts, q: SingleQuestion, questions: [SingleQuest
         i = 0
         while None in result:
             if questions[i] != None:
-                result[i] = solveStackQuestions(rules, facts, result, questions, i, rules[kbI].opr)
+                result[i] = solveStackQuestions(
+                    rules, facts, result, questions, i, rules[kbI].opr
+                )
             i = (i + 1) % len(result)
-        
-        result = combineResult(result, rules[kbI].opr, q.objs[q.pos] if q.pos != -1 else "T/F")
+
+        result = combineResult(
+            result, rules[kbI].opr, q.objs[q.pos] if q.pos != -1 else "T/F"
+        )
 
         return result[0][0], result[0][1]
 
 
 facts, rules = readFactsAndRules("BritishFamily.txt")
 questions = readQuestions("question.txt")
-i = 13
-# for fact in facts:
-#     fact.xuat()
-# for rule in rules:
-#     rule.xuat()
-# for question in questions:
-#     question.xuat()
-print("In KQ: ", solveSingleQuestion(rules, facts, questions[i]))
+# i = 13
+# # for fact in facts:
+# #     fact.xuat()
+# # for rule in rules:
+# #     rule.xuat()
+# # for question in questions:
+# #     question.xuat()
+# print("In KQ: ", solveSingleQuestion(rules, facts, questions[i]))
 
-# # Câu hỏi liên quan đến Facts
-# # YES - NO
-# fq1 = SingleQuestion("Male", ["Tac"], -1)  # True
-# fq3 = SingleQuestion("Female", ["Huong"], -1)  # True
-# # WHO?
-# fq2 = SingleQuestion("Female", ["X"], 0)  # ['Giang', 'Trinh', 'Huong', 'Xanh']
-# fq4 = SingleQuestion("Male", ["X"], 0)  # ['Tra', 'L', 'Tu', 'Tac']
-# fq5 = SingleQuestion("Parent", ["Huong", "X"], 1)  # ['Tra', 'Giang', 'Trinh']
-# fq6 = SingleQuestion("Parent", ["?", "Tra"], 0)  # ['L', 'Huong']
-
-# # Câu hỏi liên quan đến Rules
-# # YES - NO
-# rq = SingleQuestion("Father", ["L", "Tra"], -1)  # True
-# rq1 = SingleQuestion("Mother", ["Huong", "Tra"], -1)  # True
-# rq2 = SingleQuestion("Married", ["L", "Huong"], -1)  # True
-# rq3 = SingleQuestion("GrandFather", ["?", "Tra"], 0)  # True
-# # WHO?
-# rq5 = SingleQuestion("GrandMother", ["Xanh", "?"], 1)  # Huong
-# # rq6 = SingleQuestion("GrandMother", ["X", "Tra"], 1) # L
-# # rq6 = SingleQuestion("GrandFather", ["L", "Tra"], -1) # L
-
-# print("In:", solveSingleQuestion(rules, facts, rq5))
-# print(solveSingleQuestion(rules, facts, rq6, []))
+for ques in questions:
+    ques.xuat()
+answers = []
+# i = 16
+for i in range(len(questions)):
+    answers.append([solveSingleQuestion(rules, facts, questions[i]), questions[i].pos])
+# answers.append(solveSingleQuestion(rules, facts, questions[i]))
+# print(len(questions))
+writeAnswers("answer.txt", answers)
